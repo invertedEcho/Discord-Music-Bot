@@ -1,0 +1,8 @@
+.env
+__pycache__/
+cogs/__pycache__/
+.breakpoints
+.replit
+poetry.lock
+pyproject.toml
+*.webm
