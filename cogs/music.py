@@ -12,7 +12,7 @@ import asyncio
 logging.basicConfig(level=logging.WARNING)
 
 video_unavailable = "This video is no longer available. It will be skipped."
-queue_empty = "Queue is now empty, leaving the voice channel."
+# queue_empty = "Queue is now empty, leaving the voice channel."
 user_not_in_vc = "You need to be in a voice channel to use this command."
 warn_long_video = """This seems like a long video. The download could take longer than normal.""" \
              """The bot will still respond during download."""
@@ -128,7 +128,6 @@ class Music(commands.Cog):
                 voice = discord.utils.get(self.bot.voice_clients,
                                           guild=self.interaction.guild)
                 if voice is not None:
-                    self.bot.loop.create_task(self.interaction.response.send_message(queue_empty))
                     self.bot.loop.create_task(voice.disconnect(force=True))
 
     async def play_music(self):
@@ -206,13 +205,15 @@ class Music(commands.Cog):
     @app_commands.command(name='leave', description='Leave the current channel')
     async def leave(self, interaction: discord.Interaction):
         self.interaction = interaction
-        voice = interaction.client.voice_clients[0]
+        if interaction.client.voice_clients:
+            voice = interaction.client.voice_clients[0]
+        else:
+            await interaction.response.send_message("Bot is currently not connected to any channel.")
+            return
         if voice is not None:
             self.clear_queue_lists()
             await voice.disconnect(force=True)
             await interaction.response.send_message("Bot left the channel and cleared the queue.")
-        else:
-            await interaction.response.send_message("Bot is currently not connected to any channel.")
 
     @app_commands.command(name='join', description='Join the channel youre in')
     async def join(self, interaction: discord.Interaction):
