@@ -222,6 +222,7 @@ class Music(commands.Cog):
             voicechannel_author = interaction.user.voice
             voiceChannel = voicechannel_author.channel
             await voiceChannel.connect()
+            await interaction.response.send_message("Bot joined the channel.")
         except AttributeError:
             await interaction.response.send_message(user_not_in_vc)
         except discord.ClientException:
